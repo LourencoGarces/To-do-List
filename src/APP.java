@@ -1,9 +1,9 @@
 import java.util.*;
 public class APP {
     static Scanner input = new Scanner(System.in);
-    static ArrayList<Tarefas> tarefas = new ArrayList<Tarefas>();
+    static ArrayList<Tarefas> tarefas = new ArrayList<>();
     public static void main(String[] args) {
-        int opcao = 0;
+        int opcao;
         do {
             menu();
             opcao = input.nextInt();
@@ -24,6 +24,12 @@ public class APP {
                 case 5:
                     mudarEstado();
                     break;
+                case 6:
+                    Persistencia_Dados.salvarTarefas(tarefas);
+                    break;
+                case 7:
+                    tarefas = Persistencia_Dados.carregarTarefas();
+                    break;
                 case 0:
                     System.out.println("Saindo...");
                     break;
@@ -39,6 +45,8 @@ public class APP {
         System.out.println("3 - Editar tarefa");
         System.out.println("4 - Remover tarefa");
         System.out.println("5 - Mudar estado da tarefa");
+        System.out.println("6 - Salvar tarefas");
+        System.out.println("7 - Carregar tarefas");
         System.out.println("0 - Sair");
     }
     private static void adicionarTarefa() {
