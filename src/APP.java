@@ -4,6 +4,7 @@ public class APP {
     static ArrayList<Tarefas> tarefas = new ArrayList<>();
     public static void main(String[] args) {
         int opcao;
+        Ecra ecra = new Ecra();
         do {
             menu();
             opcao = input.nextInt();
