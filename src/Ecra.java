@@ -2,8 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.time.LocalTime;
 public class Ecra extends JFrame{
     private ArrayList<Tarefas> tarefas = new ArrayList<>();
+    private Timer timer;
     public Ecra() {
         /*private static void menu() {
             System.out.println("1 - Adicionar tarefa");
@@ -79,12 +81,19 @@ public class Ecra extends JFrame{
         botao7.setBackground(Color.GRAY);
         add(botao7);
 
-        JButton botao8 = new JButton("Sair");
-        botao8.setBounds(750, 900, 200, 50);
+        JButton botao8 = new JButton("Defenir Lembrete");
+        botao8.setBounds(380, 300, 200, 50);
         botao8.setFont(new Font("Arial", Font.BOLD, 18));
         botao8.setForeground(Color.BLACK);
         botao8.setBackground(Color.GRAY);
         add(botao8);
+
+        JButton botao9 = new JButton("Sair");
+        botao9.setBounds(750, 900, 200, 50);
+        botao9.setFont(new Font("Arial", Font.BOLD, 18));
+        botao9.setForeground(Color.BLACK);
+        botao9.setBackground(Color.GRAY);
+        add(botao9);
 
         //Acções
         botao.addActionListener(this::acao1);
@@ -95,9 +104,45 @@ public class Ecra extends JFrame{
         botao6.addActionListener(this::acao6);
         botao7.addActionListener(this::acao7);
         botao8.addActionListener(this::acao8);
+        botao9.addActionListener(this::acao9);
+    }
+    private void acao9(ActionEvent actionEvent) {
+        System.exit(0);
     }
     private void acao8(ActionEvent actionEvent) {
-        System.exit(0);
+        String horaStr = JOptionPane.showInputDialog("Digite a hora do lembrete (HH:mm):");
+
+        if (horaStr == null || horaStr.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Hora do lembrete não fornecida.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            // Parse da hora fornecida
+            LocalTime horaLembrete = LocalTime.parse(horaStr);
+
+            // Calcular o tempo até a hora do lembrete em milissegundos
+            long delay = horaLembrete.toNanoOfDay() - LocalTime.now().toNanoOfDay();
+
+            if (delay <= 0) {
+                JOptionPane.showMessageDialog(null, "A hora do lembrete deve ser no futuro.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Configurar o Timer para exibir uma notificação na hora do lembrete
+            timer = new Timer((int) (delay / 1_000_000), evt -> {
+                exibirNotificacao("Lembrete: Hora de fazer algo!");
+                timer.stop(); // Parar o Timer após a notificação
+            });
+            timer.setRepeats(false); // Não repetir o Timer
+            timer.start(); // Iniciar o Timer
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Formato de hora inválido. Use HH:mm.", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    private void exibirNotificacao(String mensagem) {
+        JOptionPane.showMessageDialog(null, mensagem, "Lembrete", JOptionPane.INFORMATION_MESSAGE);
     }
     private void acao7(ActionEvent actionEvent) {
         tarefas = Persistencia_Dados.carregarTarefas();
